@@ -4,9 +4,13 @@
 #include "GraphBase.hpp"
 #include <unordered_map>
 #include <utility>
+#include <vector>
+#include <string>
+
+class Vertex;
 
 // Define a value of infinity for comparison/initialization
-#define infinity  static_cast<unsigned long>(~0);
+#define infinity static_cast<unsigned long>(~0)
 
 /*PriorityQueue Class: Unique Indexed priority queue implementation for performing Dijkstra's algorithm
 - Uses vector heap for storage
@@ -19,6 +23,7 @@ class PriorityQueue {
     void bubbleUp(int index);
     void bubbleDown(int index);
 
+public:
     PriorityQueue() = default;
 
     bool isEmpty() const{return heap.empty();};
@@ -69,7 +74,8 @@ class Vertex{
 
 
 };
-class Graph : GraphBase{
+class Graph : public GraphBase{
+public:
     // Using std::unordered_map for the vertex sequence
     // provides ease of use in retrieving by lable
     // without sacrificing constant time complexity.
