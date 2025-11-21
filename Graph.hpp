@@ -2,21 +2,20 @@
 #define GRAPH_H
 
 #include "GraphBase.hpp"
-#include <string>
-#include <vector>
-#include <map>
+#include <unordered_map>
 #include <utility>
 
 // Define a value of infinity for comparison/initialization
 #define infinity  static_cast<unsigned long>(~0);
 
-/*PriorityQueue Class: Unique priority queue implementation for performing Dijkstra's algorithm
+/*PriorityQueue Class: Unique Indexed priority queue implementation for performing Dijkstra's algorithm
 - Uses vector heap for storage
 - Stores pairs of (distance, vertex)
 - Uses "distance" as the key for sorting entries
 */
 class PriorityQueue {
     std::vector<std::pair<unsigned long, Vertex*>> heap;
+    std::unordered_map<std::string, unsigned long> hash_table; //for quickly knowing hash index of a node based on unique label
     void bubbleUp(int index);
     void bubbleDown(int index);
 
@@ -24,6 +23,7 @@ class PriorityQueue {
 
     bool isEmpty() const{return heap.empty();};
     void push(unsigned long dist, Vertex* v);
+    void updateDistance(std::string label, unsigned long newKey);
     std::pair<unsigned long, Vertex*> pop();
 };
 /*Edge Class: implementation of undirected edge 
@@ -37,7 +37,7 @@ class Edge{
     // returns the other vertex in the pair (u,v) given that the input is u or v
     // otherwise returns nullptr.
     // 'inline' in case of override (header file function implementation)
-    inline Vertex* geOtherVertex(Vertex* currentVertex){
+    inline Vertex* getOtherVertex(Vertex* currentVertex){
         if(currentVertex == u){
             return v;
         }else if(currentVertex == v){
@@ -52,7 +52,7 @@ class Edge{
 class Vertex{
     public:
     std :: string label;
-    std::vector<Edge> adjEdges; //adjacency list (label.adjEdges.begin() for iterator)
+    std::vector<Edge*> adjEdges; //adjacency list (label.adjEdges.begin() for iterator)
 
     // For Dijkstra's 
     unsigned long distance;
@@ -70,13 +70,10 @@ class Vertex{
 
 };
 class Graph : GraphBase{
-    // Using std::map for o(logn) lookups
-    // o(logn) comes from how its entries are stored
-    // std::map stores items in self-balancing BST (specifically a Red-Black Tree)
-    std :: map<std::string, Vertex*> vertices;
-    
-    // Helper function for using find(labelKey) in the graph map{labelKey,Vertex*}
-    Vertex* getVertex(std::string labelKey) const;
+    // Using std::unordered_map for the vertex sequence
+    // provides ease of use in retrieving by lable
+    // without sacrificing constant time complexity.
+    std::unordered_map<std::string, Vertex*> vertices;
 
     Graph() = default; // default in case of memcpy
 
@@ -87,7 +84,8 @@ class Graph : GraphBase{
     /*shortestPath(): 
     - finds shortest path between two vertexes by performing dijkstra's algorithm
       over a 
-    Input: Weighted graph G ()
+    algorithm:
+      Input: Weighted graph G ()
     */
     unsigned long shortestPath(std::string startLabel, std::string EndLabel, std::vector<std::string> &path);
 
