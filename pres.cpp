@@ -43,5 +43,20 @@ unsigned long Graph::shortestPath(std::string startLabel, std::string endLabel, 
 }
 
 
-/*PQ*/
+/*PQ
+Header:*/
+class PriorityQueue {
+    std::vector<std::pair<unsigned long, Vertex*>> heap;
+    void bubbleUp(int index);
+    void bubbleDown(int index);
+
+public:
+    PriorityQueue() = default;
+
+    bool isEmpty() const{return heap.empty();};
+    void push(unsigned long dist, Vertex* v);
+    std::pair<unsigned long, Vertex*> pop();
+};
+/*implementation:
+*/
 
