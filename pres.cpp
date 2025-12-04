@@ -1,3 +1,6 @@
+/*GRAPH
+Header:*/
+
 /*----------------------------------
 DIJKSTRA's*/
 unsigned long Graph::shortestPath(std::string startLabel, std::string endLabel, std::vector<std::string>& path) {
@@ -66,4 +69,49 @@ public:
 };
 /*implementation:
 */
+void PriorityQueue::bubbleUp(int index) {
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (heap[index].first >= heap[parent].first) break;
+
+        std::swap(heap[index], heap[parent]);
+        index = parent;
+    }
+}
+
+void PriorityQueue::bubbleDown(int index) {
+    int size = heap.size();
+    while (true) {
+        int left = 2*index + 1;
+        int right = 2*index + 2;
+        int smallest = index;
+
+        if (left < size && heap[left].first < heap[smallest].first)
+            smallest = left;
+        if (right < size && heap[right].first < heap[smallest].first)
+            smallest = right;
+        if (smallest == index) break;
+
+        std::swap(heap[index], heap[smallest]);
+        index = smallest;
+    }
+}
+
+void PriorityQueue::push(unsigned long dist, Vertex* v) {
+    heap.push_back({dist, v});
+    bubbleUp(heap.size() - 1);
+}
+
+std::pair<unsigned long, Vertex*> PriorityQueue::pop() {
+    if (heap.empty()) return {infinity, nullptr};
+
+    auto top = heap[0];
+    heap[0] = heap.back();
+    heap.pop_back();
+    if (!heap.empty()) bubbleDown(0);
+
+    return top;
+}
+
+
 
