@@ -3,6 +3,7 @@ DIJKSTRA's*/
 unsigned long Graph::shortestPath(std::string startLabel, std::string endLabel, std::vector<std::string>& path) {
     if (!vertices.count(startLabel) || !vertices.count(endLabel)) return infinity;
 
+    // Initialize — Set all distances to infinity, start node to 0
     for (auto& [lbl, v]: vertices) v->resetState();
 
     Vertex* start = vertices[startLabel];
@@ -10,15 +11,19 @@ unsigned long Graph::shortestPath(std::string startLabel, std::string endLabel, 
 
     PriorityQueue pq;
     start->distance = 0;
+    //
     pq.push(0, start);
 
     while (!pq.isEmpty()) {
+        // Select — Extract the unvisited vertex with minimum distance
         auto [dist, current] = pq.pop();
         if (!current || current->visited) continue;
 
         current->visited = true;
+        //
         if (current == goal) break;
 
+        //Relax — Update distances to neighbors if shorter path found
         for (Edge* e : current->adjEdges) {
             Vertex* next = e->getOtherVertex(current);
             if (!next || next->visited) continue;
@@ -30,15 +35,17 @@ unsigned long Graph::shortestPath(std::string startLabel, std::string endLabel, 
                 pq.push(newDist, next);
             }
         }
+        //
     }
 
     if (goal->distance == infinity) return infinity;
 
+    //Reconstruct — Build the path using predecessor information
     std::vector<std::string> rev;
     for (Vertex* v = goal; v; v = v->previous) rev.push_back(v->label);
     std::reverse(rev.begin(), rev.end());
     path = rev;
-
+// 
     return goal->distance;
 }
 
